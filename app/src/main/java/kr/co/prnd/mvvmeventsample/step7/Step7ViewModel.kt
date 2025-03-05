@@ -12,7 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class Step7ViewModel @Inject constructor() : ViewModel() {
 
-    private val _eventChannel = Channel<Event>(Channel.BUFFERED)
+    private val _eventChannel = Channel<Event>(Channel.CONFLATED)
     val eventFlow = _eventChannel.receiveAsFlow()
 
     fun showToast() = viewModelScope.launch {
@@ -38,5 +38,10 @@ class Step7ViewModel @Inject constructor() : ViewModel() {
         data class ShowToast(val text: String) : Event()
         data class Aaa(val value: String) : Event()
         data class Bbb(val value: Int) : Event()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        _eventChannel.close()
     }
 }
